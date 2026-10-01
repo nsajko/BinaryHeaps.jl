@@ -61,8 +61,8 @@ pop!(h) # returns 1
 ```
 """
 mutable struct BinaryHeap{T, O <: Base.Order.Ordering} <: AbstractHeap{T}
-    ordering::O
-    valtree::Vector{T}
+    const ordering::O
+    const valtree::Vector{T}
 
     function BinaryHeap{T}(ordering::Base.Order.Ordering) where {T}
         return new{T, typeof(ordering)}(ordering, Vector{T}())
