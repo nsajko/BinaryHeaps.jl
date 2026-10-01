@@ -262,6 +262,18 @@ using Test
             end
         end
 
+        @testset "nlargest and nsmallest: type stability" begin
+            arrs = let a = [9, 8], b = Memory{Float32}(undef, 2)
+                b .= a
+                Any[a, b, (@view a[1:2]), (@view b[1:2])]
+            end
+            for nex in (nlargest, nsmallest)
+                for a in arrs
+                    @test (@inferred nex(1, a)) isa AbstractVector{eltype(a)}
+                end
+            end
+        end
+
         @testset "push! type conversion" begin # issue 399
             h = BinaryMinHeap{Float64}()
             push!(h, 3.0)

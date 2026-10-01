@@ -36,14 +36,19 @@ Return an array of the first `n` values of `arr` sorted by `ord`.
 """
 function nextreme(ord::Base.Order.Ordering, n::Int, arr::AbstractVector{T}) where {T}
     Base.require_one_based_indexing(arr)
-    if n <= 0
-        return T[]
-    elseif n >= length(arr)
-        return sort(arr; order = ord)
+    len = length(arr)
+    n = clamp(n, 0, len)
+    buffer = arr[1:n]
+
+    if n ∉ (1:(len - 1))
+        if n > 0
+            buffer = sort!(buffer; order = ord)
+        end
+        return buffer
     end
 
     rev = Base.Order.ReverseOrdering(ord)
-    buffer = heapify!(arr[1:n], rev)
+    buffer = heapify!(buffer, rev)
 
     @inbounds for i in (n + 1):length(arr)
         xi = arr[i]
